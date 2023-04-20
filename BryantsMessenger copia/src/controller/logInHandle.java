@@ -35,13 +35,6 @@ public class logInHandle {
     Stage stage = new Stage();
     
     private Person person;
-    
-  
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-	
 	
 
 	@FXML
@@ -49,13 +42,15 @@ public class logInHandle {
     	sql= new ConectaSql();
     	String e= email.getText();
     	String p=pass.getText();
-    	this.person =sql.getUser(e, p);
+    	person =sql.getUser(e, p);
     	//this.person= new Person(e,p);
     	if(person==null)
     		register();
     	else {
     		FXMLLoader loader= new FXMLLoader(getClass().getResource("/vista/userListFinal.fxml"));
         	Parent root = loader.load();
+        	userListController controller=loader.getController();
+        	controller.setPerson(person);
         	Scene scene=new Scene(root);
         	stage=new Stage();
         	stage.setScene(scene);
@@ -72,6 +67,8 @@ public class logInHandle {
     	register();
     	
     }
+    
+ 
 
 
     void register() throws IOException{

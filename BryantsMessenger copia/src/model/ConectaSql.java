@@ -34,10 +34,11 @@ public class ConectaSql extends Connect {
 		try {
 			ResultSet rs = stm.executeQuery(sql);
 			rs.next();
+			int id= rs.getInt(1);
 			String n = rs.getNString(2);
 			String e = rs.getString(3);
 			
-			Person per = new Person(n,e);
+			Person per = new Person(id,n,e);
 			return per;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -46,26 +47,27 @@ public class ConectaSql extends Connect {
 		return null;
 
 	}
-	public Person getUser(String email) {
+	public Person getUser2(String email) {
 		String sql="select * from usuarios where email ='"+email+"'";
 		try {
 			ResultSet rs = stm.executeQuery(sql);
 			rs.next();
+			int id= rs.getInt(1);
 			String n = rs.getNString(2);
 			String e = rs.getString(3);
 			
-			Person per = new Person(n,e);
+			Person per = new Person(id,n,e);
 			return per;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			//return null;
 		}
 		return null;
-
 	}
 	
+	
 	public boolean addMessage(Message m) {
-		String sql = "insert into mails values (null,'"+m.getRemit()+"','"+m.getTous()+"','"+m.getMessage()+"','"+m.getDate()+"')";
+		String sql = "insert into mensajes values (null,'"+m.getMessage()+"','"+m.getRemit()+"','"+m.getTous()+"')";
 		System.out.println(sql);
 		try {
 			stm.executeUpdate(sql);
@@ -76,19 +78,18 @@ public class ConectaSql extends Connect {
 			return false;
 		}
 	}
-	public ArrayList<Message> getMessages(String email){
+	public ArrayList<Message> getMessages(String email, String email2){
 		ArrayList<Message> messages = new ArrayList<Message>();
-		String sql="select * from mails where para ='"+email+"' order by fecha desc";
-		
+		String sql="select * from mensajes where id_remite=(select id_usuario from usuarios where email ='"+email+"') and id_destino=(select id_usuario from usuarios where email ='"+email2+"')";
+		System.out.println(sql);
 		ResultSet rs;
 		try {
 			rs = stm.executeQuery(sql);
 			while(rs.next()) {
-				String from = rs.getNString(2);
-				String to = rs.getString(3);
+				int from = rs.getInt(2);
+				int to = rs.getInt(3);
 				String text = rs.getString(4);
-				Date fecha = rs.getDate(5);
-			    messages.add(new Message(from,to,text,fecha));
+			    messages.add(new Message(from,to,text));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
